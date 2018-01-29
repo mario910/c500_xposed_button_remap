@@ -9,6 +9,10 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
  */
 
 public class ButtonRemapHook extends XC_MethodHook {
+
+    public static final String HOOKED_CLASS_NAME = "Class";
+    public static final String HOOKED_METHOD_NAME = "Method";
+
     @Override
     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 
