@@ -26,4 +26,11 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     provided 'de.robv.android.xposed:api:82'
     provided 'de.robv.android.xposed:api:82:sources'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.3'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.3'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.3'
+// https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.3'
+
 }

@@ -19,7 +19,7 @@ import android.content.Intent;
 
 public class ModeButtonMethodHook extends XC_MethodHook {
 
-    public static final String TAG = "ModeButtonMethodHook";
+    public static final String TAG = "C500ModeBtnHook";
 
     public static final String HOOKED_CLASS_NAME = "com.ts.main.common.WinShow";
     public static final String HOOKED_METHOD_NAME = "DealModeKey";
@@ -28,19 +28,26 @@ public class ModeButtonMethodHook extends XC_MethodHook {
 
     private static int currentModeIndex = 0;
 
+    public ModeButtonMethodHook(C500RemapConfig config) {
+        super();
+        this.config = config;
+    }
+
     @Override
     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+        Log.d(TAG, "In beforeHookedMethod for MODE button");
+
         if (config.isModeButtonModificationEnabled() && !config.getModeButtonActivities().isEmpty()) {
-            Log.d(TAG, "In beforeHookedMethod for MODE button");
-
             C500RemapConfigModeActivity currentModeActivity = config.getModeButtonActivities().get(currentModeIndex);
-
+            String appPackage = currentModeActivity.getAppPackage();
+            Log.d(TAG, String.format("In Mode if: currentModeIndex: %d appPackage: %s", currentModeIndex, appPackage));
             // todo: skip to next if already in foreground?
-            boolean isAppInst = isAppInstalled(currentModeActivity.getAppPackage());
-            String msg = String.format("Is app %s installed: %s", currentModeActivity.getAppPackage(), isAppInst);
+            boolean isAppInst = isAppInstalled(appPackage);
+            String msg = String.format("Is app %s installed: %s", appPackage, isAppInst);
             Log.d(TAG, msg);
 
             try {
+                Log.d(TAG, String.format("In showApp try"));
                 showApp(currentModeActivity.getAppName(), currentModeActivity.getActivityName());
                 // todo: option to send play signal?
             }
