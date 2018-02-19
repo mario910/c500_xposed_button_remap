@@ -62,6 +62,8 @@ public class Main implements IXposedHookLoadPackage {
             config.setModeButtonActivities(modeButtonActivities);
 
             //try {
+            //    String path = String.format("%s/%s", Environment.getExternalStorageDirectory(), XML_FILE_NAME);
+            //    File configFile = new File(path);
             //    XmlMapper xmlMapper = new XmlMapper();
             //    xmlMapper.writeValue(configFile, config);
             //} catch (JsonGenerationException e) {
@@ -90,7 +92,7 @@ public class Main implements IXposedHookLoadPackage {
 
     @Override
     public void handleLoadPackage(LoadPackageParam loadPackageParam) throws Throwable {
-        if (!loadPackageParam.packageName.equals(PACKAGE_NAME))
+        if (!loadPackageParam.packageName.equals(PACKAGE_NAME) && !loadPackageParam.packageName.equals("com.ts.MainUI"))
             return;
 
         Log.d(TAG, "In handleLoadPackage");

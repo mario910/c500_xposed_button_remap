@@ -1,6 +1,8 @@
 package pl.goscioo.c500.c500xposedbutonremap;
 import android.app.AndroidAppHelper;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.util.Log;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -36,7 +38,7 @@ public class ModeButtonMethodHook extends XC_MethodHook {
     @Override
     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
         Log.d(TAG, "In beforeHookedMethod for MODE button");
-
+        param.setResult(null);
         if (config.isModeButtonModificationEnabled() && !config.getModeButtonActivities().isEmpty()) {
             C500RemapConfigModeActivity currentModeActivity = config.getModeButtonActivities().get(currentModeIndex);
             String appPackage = currentModeActivity.getAppPackage();
@@ -48,8 +50,9 @@ public class ModeButtonMethodHook extends XC_MethodHook {
 
             try {
                 Log.d(TAG, String.format("In showApp try"));
-                showApp(currentModeActivity.getAppName(), currentModeActivity.getActivityName());
+                //showApp(currentModeActivity.getAppPackage(), currentModeActivity.getActivityName());
                 // todo: option to send play signal?
+                openApplication(currentModeActivity.getAppPackage());
             }
             catch (Exception e) {
                 Log.e(TAG, e.getMessage());
@@ -60,6 +63,30 @@ public class ModeButtonMethodHook extends XC_MethodHook {
                 currentModeIndex = 0;
 
             param.setResult(null);
+        }
+    }
+
+    public void openApplication(String packageName) {
+        Context context = AndroidAppHelper.currentApplication();
+        PackageInfo pi;
+        try {
+            pi = context.getPackageManager().getPackageInfo(packageName, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            pi = null;
+            e.printStackTrace();
+        }
+        if (pi != null) {
+            Intent resolveIntent = new Intent("android.intent.action.MAIN", null);
+            resolveIntent.setPackage(pi.packageName);
+            ResolveInfo ri = (ResolveInfo) context.getPackageManager().queryIntentActivities(resolveIntent, 0).iterator().next();
+            if (ri != null) {
+                packageName = ri.activityInfo.packageName;
+                String className = ri.activityInfo.name;
+                Intent intent = new Intent("android.intent.action.MAIN");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setComponent(new ComponentName(packageName, className));
+                context.startActivity(intent);
+            }
         }
     }
 
